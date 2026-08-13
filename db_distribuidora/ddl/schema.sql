@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS productos (
     volumen_ml INT NOT NULL CHECK (volumen_ml > 0),
     stock_actual INT NOT NULL DEFAULT 0 CHECK (stock_actual >= 0),
     stock_minimo INT NOT NULL DEFAULT 0 CHECK (stock_minimo >= 0)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB;
 
 -- ============================================================
 -- TABLA 2: clientes
@@ -27,7 +27,7 @@ CREATE TABLE IF NOT EXISTS clientes (
     direccion VARCHAR(200) NOT NULL,
     telefono VARCHAR(15) NOT NULL,
     correo_electronico VARCHAR(100) NOT NULL UNIQUE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB;
 
 -- ============================================================
 -- TABLA 3: sedes
@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS sedes (
     ubicacion VARCHAR(200) NOT NULL,
     capacidad_almacenamiento INT NOT NULL CHECK (capacidad_almacenamiento > 0),
     encargado VARCHAR(150) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB;
 
 
 
@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS pedidos (
     total_con_iva DECIMAL(12,2) NOT NULL DEFAULT 0.00 CHECK (total_con_iva >= 0),
     CONSTRAINT fk_pedidos_cliente FOREIGN KEY (id_cliente) REFERENCES clientes(id_cliente) ON DELETE RESTRICT ON UPDATE CASCADE,
     CONSTRAINT fk_pedidos_sede FOREIGN KEY (id_sede) REFERENCES sedes(id_sede) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB;
 
 
 -- ============================================================
@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS detalle_pedido (
     PRIMARY KEY (id_pedido, id_producto),
     CONSTRAINT fk_detalle_pedido FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_detalle_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE RESTRICT ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB;
 
 
 -- ============================================================
@@ -81,4 +81,28 @@ CREATE TABLE IF NOT EXISTS auditoria_precios (
     precio_nuevo DECIMAL(10,2) NOT NULL,
     fecha_cambio DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_auditoria_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB;
+
+
+-- ============================================================
+-- TABLA: encargados
+-- ============================================================
+CREATE TABLE IF NOT EXISTS encargados (
+    id_encargado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(150) NOT NULL,
+    telefono VARCHAR(15) NOT NULL,
+    correo_electronico VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB;
+
+-- ============================================================
+-- TABLA: inventario (según imagen provista)
+-- ============================================================
+CREATE TABLE IF NOT EXISTS inventario (
+    id_inventario INT AUTO_INCREMENT PRIMARY KEY,
+    id_producto INT NOT NULL,
+    id_sucursal INT NOT NULL,
+    inventario_actual INT NOT NULL DEFAULT 0 CHECK (inventario_actual >= 0),
+    nivel_inventario_minimo INT NOT NULL DEFAULT 0 CHECK (nivel_inventario_minimo >= 0),
+    CONSTRAINT fk_inventario_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_inventario_sucursal FOREIGN KEY (id_sucursal) REFERENCES sedes(id_sede) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB;
