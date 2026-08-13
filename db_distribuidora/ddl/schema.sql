@@ -28,3 +28,14 @@ CREATE TABLE IF NOT EXISTS clientes (
     telefono VARCHAR(15) NOT NULL,
     correo_electronico VARCHAR(100) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- TABLA 3: sedes
+-- ============================================================
+CREATE TABLE IF NOT EXISTS sedes (
+    id_sede INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_sede VARCHAR(100) NOT NULL,
+    ubicacion VARCHAR(200) NOT NULL,
+    capacidad_almacenamiento INT NOT NULL CHECK (capacidad_almacenamiento > 0),
+    encargado VARCHAR(150) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
