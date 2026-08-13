@@ -116,3 +116,24 @@ CREATE TABLE IF NOT EXISTS encargados (
     telefono VARCHAR(15) NOT NULL,
     correo_electronico VARCHAR(100) NOT NULL UNIQUE
 ) ENGINE=InnoDB;
+
+
+-- ejecutar esta parte antes inseertar los datos
+
+
+-- 1. Agregar la columna clave foránea
+ALTER TABLE productos 
+ADD COLUMN id_categoria INT NULL AFTER id_producto;
+
+-- 2. Migrar la relación existente desde la columna antigua
+UPDATE productos p
+JOIN categorias c ON p.categoria = c.nombre_categoria
+SET p.id_categoria = c.id_categoria;
+
+-- 3. Definir la columna como NOT NULL, crear la FK y eliminar la columna antigua
+ALTER TABLE productos 
+MODIFY COLUMN id_categoria INT NOT NULL,
+ADD CONSTRAINT fk_productos_categoria 
+    FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria) 
+    ON DELETE RESTRICT ON UPDATE CASCADE,
+DROP COLUMN categoria;
