@@ -106,3 +106,13 @@ CREATE TABLE IF NOT EXISTS inventario (
     CONSTRAINT fk_inventario_producto FOREIGN KEY (id_producto) REFERENCES productos(id_producto) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_inventario_sucursal FOREIGN KEY (id_sucursal) REFERENCES sedes(id_sede) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
+
+-- ============================================================
+-- TABLA: encargados
+-- ============================================================
+CREATE TABLE IF NOT EXISTS encargados (
+    id_encargado INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(150) NOT NULL,
+    telefono VARCHAR(15) NOT NULL,
+    correo_electronico VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB;
