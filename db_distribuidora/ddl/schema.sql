@@ -16,3 +16,15 @@ CREATE TABLE IF NOT EXISTS productos (
     stock_actual INT NOT NULL DEFAULT 0 CHECK (stock_actual >= 0),
     stock_minimo INT NOT NULL DEFAULT 0 CHECK (stock_minimo >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ============================================================
+-- TABLA 2: clientes
+-- ============================================================
+CREATE TABLE IF NOT EXISTS clientes (
+    id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_completo VARCHAR(150) NOT NULL,
+    identificacion VARCHAR(20) NOT NULL UNIQUE,
+    direccion VARCHAR(200) NOT NULL,
+    telefono VARCHAR(15) NOT NULL,
+    correo_electronico VARCHAR(100) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
