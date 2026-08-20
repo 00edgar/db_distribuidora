@@ -6,7 +6,7 @@ TRUNCATE TABLE detalle_pedido;
 TRUNCATE TABLE pedidos;
 TRUNCATE TABLE inventario;
 TRUNCATE TABLE productos;
-TRUNCATE TABLE categorias;
+TRUNCATE TABLE categoria;
 TRUNCATE TABLE clientes;
 TRUNCATE TABLE sedes;
 TRUNCATE TABLE encargados;
@@ -24,7 +24,7 @@ INSERT INTO encargados (id_encargado, nombre_completo, telefono, correo_electron
 -- ============================================================
 -- 2. CATEGORÍAS (5)
 -- ============================================================
-INSERT INTO categorias (id_categoria, nombre_categoria, descripcion) VALUES
+INSERT INTO categoria (id_categoria, nombre_categoria, descripcion) VALUES
 (1, 'Gaseosas Tradicionales', 'Bebidas gaseosas con sabores clásicos y azucarados'),
 (2, 'Gaseosas Zero', 'Bebidas gaseosas sin azúcar y bajas en calorías'),
 (3, 'Energizantes', 'Bebidas diseñadas para incrementar la energía y rendimiento'),
