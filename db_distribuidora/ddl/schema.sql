@@ -3,7 +3,6 @@
 -- ============================================================
 CREATE DATABASE IF NOT EXISTS db_distribuidora;
 USE db_distribuidora;
-
 -- ============================================================
 -- TABLA 1: productos
 -- ============================================================
@@ -117,23 +116,34 @@ CREATE TABLE IF NOT EXISTS encargados (
     correo_electronico VARCHAR(100) NOT NULL UNIQUE
 ) ENGINE=InnoDB;
 
+-- 1. Crear la tabla categorias según el diagrama
+CREATE TABLE IF NOT EXISTS categoria (
+    id_categoria INT AUTO_INCREMENT PRIMARY KEY,
+    nombre_categoria VARCHAR(50) NOT NULL,
+    descripcion VARCHAR(255) NULL
+)engine = InnoDB;
+
 
 -- ejecutar esta parte antes inseertar los datos
 
+-- Desactivar el modo de actualización segura temporalmente
+SET SQL_SAFE_UPDATES = 0;
 
 -- 1. Agregar la columna clave foránea
 ALTER TABLE productos 
 ADD COLUMN id_categoria INT NULL AFTER id_producto;
 
--- 2. Migrar la relación existente desde la columna antigua
+-- 2. Migrar la relación desde la tabla 'categoria' (singular)
 UPDATE productos p
-JOIN categorias c ON p.categoria = c.nombre_categoria
+JOIN categoria c ON LOWER(TRIM(p.categoria)) = LOWER(TRIM(c.nombre_categoria))
 SET p.id_categoria = c.id_categoria;
 
--- 3. Definir la columna como NOT NULL, crear la FK y eliminar la columna antigua
+-- 3. Definir la columna como NOT NULL, crear la FK apuntando a 'categoria' y eliminar la columna antigua
 ALTER TABLE productos 
 MODIFY COLUMN id_categoria INT NOT NULL,
 ADD CONSTRAINT fk_productos_categoria 
-    FOREIGN KEY (id_categoria) REFERENCES categorias(id_categoria) 
-    ON DELETE RESTRICT ON UPDATE CASCADE,
+    FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria) ,
 DROP COLUMN categoria;
+ 
+-- Reactivar el modo de actualización segura
+SET SQL_SAFE_UPDATES = 1;
