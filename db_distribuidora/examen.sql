@@ -3,8 +3,6 @@ USE db_distribuidora;
 --   Reciba como parámetros el ID del cliente, la fecha de inicio y la fecha final.
 -- Retorne el valor total de los pedidos realizados por ese cliente dentro del rango de fechas.
 --  Si el cliente no tiene pedidos en ese período, debe retornar 0.alter
-USE db_distribuidora;
-
 DROP FUNCTION IF EXISTS total_pedidos_cliente_periodo;
 DELIMITER //
 CREATE FUNCTION total_pedidos_cliente_periodo(
@@ -12,29 +10,35 @@ CREATE FUNCTION total_pedidos_cliente_periodo(
     fecha_inicio DATE,
     fecha_final DATE
 )
- RETURNS DECIMAL(10, 2)
- DETERMINISTIC
- BEGIN 
-    DECLARE total DECIMAL(10, 2);
-    SELECT IFNULL(SUM(total_pedido), 0) INTO total
-    FROM pedidos
-    WHERE cliente_id = cliente_id
-      AND fecha_pedido BETWEEN fecha_inicio AND fecha_final;
-    RETURN total;
+RETURNS DECIMAL(10, 2)
+		DETERMINISTIC
+	BEGIN 
+		DECLARE total DECIMAL(10, 2);
+		SELECT IFNULL(SUM(total), 0) INTO total
+		FROM pedidos
+		WHERE cliente_id = cliente_id
+		AND fecha_pedido BETWEEN fecha_inicio AND fecha_final;
+		RETURN total;
 END //
+DELIMITER ;
 
-DELIMITER 
+SELECT total_pedidos_cliente_periodo(1, '2026-01-01', '2026-12-31') AS total_acumulado;
+
 
 
 -- Crear una vista llamada vista_clientes_activos que:
 -- Muestre los clientes que han realizado al menos un pedido en los últimos 90 días.
 -- Incluya el nombre del cliente, número total de pedidos y valor total comprado.
 -- Debe usar JOIN entre clientes y pedidos, y aplicar funciones de agregación.
+
+DROP VIEW IF EXISTS vista_clientes_activos;
+
+
 CREATE VIEW vista_clientes_activos AS
 SELECT 
     c.nombre_completo AS nombre_cliente,
     COUNT(p.id_pedido) AS numero_total_pedidos,
-    SUM(p.valor_total) AS valor_total_comprado
+    SUM(p.total_con_iva) AS valor_total_comprado
 FROM 
     clientes c
 JOIN 
@@ -42,7 +46,7 @@ JOIN
 WHERE 
     p.fecha_pedido >= DATE_SUB(CURDATE(), INTERVAL 90 DAY)
 GROUP BY 
-    c.id_cliente, c.nombre;
+    c.id_cliente, c.nombre_completo;
     
 SELECT * FROM vista_clientes_activos;
 
@@ -51,10 +55,11 @@ SELECT * FROM vista_clientes_activos;
 -- Debe mostrar: nombre del cliente, cantidad de pedidos y total comprado.
 -- Usa ORDER BY y LIMIT 5 para presentar los resultados en orden descendente.
 
+
 SELECT 
     c.nombre_completo AS nombre_cliente,
     COUNT(p.id_pedido) AS cantidad_pedidos,
-    SUM(p.total) AS total_comprado
+    SUM(p.total_con_iva) AS total_comprado
 FROM 
     clientes c
 JOIN 
@@ -62,11 +67,10 @@ JOIN
 WHERE 
     EXTRACT(YEAR FROM p.fecha_pedido) = EXTRACT(YEAR FROM CURRENT_DATE)
 GROUP BY 
-    c.nombre
+    c.nombre_completo
 ORDER BY 
     total_comprado DESC
 LIMIT 5;
-
 
 
 -- 4. Crear un trigger llamado registrar_nuevo_pedido_trigger que:
